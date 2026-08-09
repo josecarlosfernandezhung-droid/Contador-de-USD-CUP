@@ -1,0 +1,9 @@
+{
+  "appId": "com.jose.contador",
+  "appName": "Contador de Dinero",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true
+  }
+}
