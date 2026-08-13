@@ -12,6 +12,12 @@
   --usd:#0299b0;
   --usd-bg:#e2f6f7;
   --usd-line:#8fd6dd;
+  --transf:#7b1fa2;
+  --transf-bg:#f3e5f5;
+  --transf-line:#ce93d8;
+  --retiro:#e65100;
+  --retiro-bg:#fff3e0;
+  --retiro-line:#ffcc80;
   --total-bg:#e8f2fb;
   --total:#01579b;
   --ink:#18160f;
@@ -48,40 +54,130 @@ body{
 }
 .icon-btn:active{background:#ffffff4a;}
 
-/* ── BARS (RATE & EXPECTED) ── */
+/* ── TABS NAVIGATION ── */
+.nav-tabs{
+  display:flex;
+  background:#fff;
+  border-bottom:2px solid var(--line);
+  flex-shrink:0;
+}
+.tab-btn{
+  flex:1;
+  padding:10px 4px;
+  border:none;
+  background:transparent;
+  font-size:13px;
+  font-weight:700;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:all 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.tab-btn.active{
+  color:var(--total);
+  border-bottom-color:var(--total);
+  background:var(--total-bg);
+}
+
+/* ── TAB CONTENT CONTAINERS ── */
+.tab-content{
+  display:none;
+  flex:1;
+  flex-direction:column;
+  overflow:hidden;
+}
+.tab-content.active{
+  display:flex;
+}
+
+/* ── BARS (RATE & EXPECTED & EXTRA INPUTS) ── */
 .top-bar{
   background:var(--usd-bg);
   border-bottom:1px solid var(--usd-line);
-  padding:6px 14px;
+  padding:8px 14px;
   display:flex;align-items:center;gap:8px;
   flex-shrink:0;
 }
-.rate-lbl{font-size:11.5px;font-weight:700;color:var(--usd);flex:1;}
-.rate-wrap{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);}
+.rate-lbl{font-size:12px;font-weight:700;color:var(--usd);flex:1;}
+.rate-wrap{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);}
 .rate-inp{
-  width:62px;padding:3px 6px;
+  width:68px;padding:4px 6px;
   border:1px solid var(--usd-line);border-radius:5px;
-  font-size:13.5px;font-weight:800;color:var(--usd);
+  font-size:14px;font-weight:800;color:var(--usd);
   font-family:inherit;text-align:right;background:#fff;
 }
 .rate-inp:focus{outline:none;border-color:var(--usd);}
 
-.exp-bar{
+/* ── ARQUEO DE CAJA TAB STYLES ── */
+.arqueo-container{
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  overflow-y:auto;
+}
+.card{
   background:#fff;
-  border-bottom:1px solid var(--line);
-  padding:6px 14px;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:8px;flex-shrink:0;
+  border-radius:10px;
+  padding:14px;
+  border:1px solid var(--line);
+  box-shadow:0 1px 3px rgba(0,0,0,0.03);
 }
-.exp-lbl{font-size:12.5px;font-weight:700;color:var(--ink);}
-.exp-wrap{display:flex;align-items:center;gap:5px;}
-.exp-inp{
-  width:105px;padding:4px 8px;
+.card-title{
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:8px;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.exp-inp-lg{
+  width:100%;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--ink);
+  font-family:inherit;
+  text-align:right;
+  background:#fafafa;
+}
+.exp-inp-lg:focus{outline:none;border-color:var(--cup);background:#fff;}
+
+.extra-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.extra-card-item{
+  padding:10px;
+  border-radius:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.extra-card-item.transf{border:1px solid var(--transf-line);background:var(--transf-bg);}
+.extra-card-item.retiro{border:1px solid var(--retiro-line);background:var(--retiro-bg);}
+
+.extra-card-lbl{font-size:11.5px;font-weight:700;}
+.extra-card-lbl.transf{color:var(--transf);}
+.extra-card-lbl.retiro{color:var(--retiro);}
+
+.extra-card-inp{
+  width:100%;padding:6px 8px;
   border:1px solid var(--line);border-radius:5px;
-  font-size:13.5px;font-weight:800;color:var(--ink);
-  font-family:inherit;text-align:right;background:#fafafa;
+  font-size:15px;font-weight:800;
+  font-family:inherit;text-align:right;background:#fff;
 }
-.exp-inp:focus{outline:none;border-color:var(--cup);background:#fff;}
+.extra-card-inp.transf{color:var(--transf);border-color:var(--transf-line);}
+.extra-card-inp.retiro{color:var(--retiro);border-color:var(--retiro-line);}
+.extra-card-inp:focus{outline:none;}
 
 /* ── COLUMN HEADERS ── */
 .col-hdrs{
@@ -179,17 +275,17 @@ body{
 }
 .totals-row{
   display:grid;grid-template-columns:1fr 1fr;
-  gap:10px;margin-bottom:10px;
+  gap:10px;margin-bottom:8px;
 }
 .tot-box{
-  border-radius:8px;padding:9px 12px;
+  border-radius:8px;padding:7px 10px;
 }
 .tot-box.cup{background:var(--cup-bg);border:1px solid var(--cup-line);}
 .tot-box.usd{background:var(--usd-bg);border:1px solid var(--usd-line);}
-.tot-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+.tot-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 .tot-lbl.cup{color:var(--cup);}
 .tot-lbl.usd{color:var(--usd);}
-.tot-val{font-size:22px;font-weight:800;font-family:"Georgia",serif;letter-spacing:-.02em;}
+.tot-val{font-size:19px;font-weight:800;font-family:"Georgia",serif;letter-spacing:-.02em;}
 .tot-val.cup{color:var(--cup);}
 .tot-val.usd{color:var(--usd);}
 
@@ -197,21 +293,21 @@ body{
   background:var(--total-bg);
   border:1px solid #b8dcf2;
   border-radius:8px;
-  padding:10px 14px;
+  padding:8px 12px;
   display:flex;align-items:center;justify-content:space-between;
-  gap:10px;
+  gap:8px;
 }
-.grand-lbl{font-size:12px;font-weight:800;color:var(--total);text-transform:uppercase;letter-spacing:.05em;}
-.grand-val{font-size:27px;font-weight:800;font-family:"Georgia",serif;color:var(--total);letter-spacing:-.02em;white-space:nowrap;}
-.grand-conv{font-size:11px;color:var(--muted);margin-top:2px;}
+.grand-lbl{font-size:11.5px;font-weight:800;color:var(--total);text-transform:uppercase;letter-spacing:.05em;}
+.grand-val{font-size:24px;font-weight:800;font-family:"Georgia",serif;color:var(--total);letter-spacing:-.02em;white-space:nowrap;}
+.grand-conv{font-size:10px;color:var(--muted);margin-top:2px;}
 
 /* ── STATUS SOBRANTE / FALTANTE ── */
 .diff-box{
-  margin-top:10px;
-  padding:9px 14px;
+  margin-top:8px;
+  padding:10px 14px;
   border-radius:8px;
   display:flex;align-items:center;justify-content:space-between;
-  font-weight:800;font-size:14.5px;
+  font-weight:800;font-size:15px;
   transition:all 0.2s ease;
 }
 .diff-box.sobrante{background-color:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;}
@@ -275,7 +371,7 @@ body{
 <div class="hdr">
   <div>
     <div class="hdr-title">💵 Contador de Dinero</div>
-    <div class="hdr-sub">CUP · USD · Sueltos y Fajos · Control de Caja</div>
+    <div class="hdr-sub">CUP · USD · Transferencias · Retiros · Caja</div>
   </div>
   <div class="hdr-actions">
     <button class="icon-btn" onclick="openSettings()" title="Ajustes">⚙️</button>
@@ -283,54 +379,78 @@ body{
   </div>
 </div>
 
-<div class="top-bar">
-  <div class="rate-lbl">💱 Tasa de cambio</div>
-  <div class="rate-wrap">
-    <span>1 USD =</span>
-    <input type="number" class="rate-inp" id="rate" value="670" min="1">
-    <span>CUP</span>
+<!-- NAVEGACIÓN POR PESTAÑAS -->
+<div class="nav-tabs">
+  <button class="tab-btn active" id="btn-tab-contador" onclick="switchTab('contador')">💵 Contador</button>
+  <button class="tab-btn" id="btn-tab-arqueo" onclick="switchTab('arqueo')">🎯 Arqueo y Cuadre</button>
+</div>
+
+<!-- PESTAÑA 1: CONTADOR DE BILLETES -->
+<div class="tab-content active" id="tab-contador">
+  <div class="top-bar">
+    <div class="rate-lbl">💱 Tasa de cambio</div>
+    <div class="rate-wrap">
+      <span>1 USD =</span>
+      <input type="number" class="rate-inp" id="rate" value="670" min="1">
+      <span>CUP</span>
+    </div>
+  </div>
+
+  <div class="col-hdrs">
+    <div class="col-hdr cup">🇨🇺 CUP <span class="col-subtag">(S / F)</span> <span class="col-total" id="hdr-cup">0</span></div>
+    <div class="col-hdr usd">🇺🇸 USD <span class="col-subtag">(S / F)</span> <span class="col-total" id="hdr-usd">$0</span></div>
+  </div>
+
+  <div class="bills-wrap">
+    <div class="bills-grid" id="bills-grid"></div>
   </div>
 </div>
 
-<div class="exp-bar">
-  <div class="exp-lbl">🎯 Venta / Caja Esperada (CUP)</div>
-  <div class="exp-wrap">
-    <input type="number" class="exp-inp" id="expected" placeholder="0" min="0" oninput="update()">
+<!-- PESTAÑA 2: ARQUEO DE CAJA (VENTA ESPERADA, TRANSFERENCIAS Y RETIROS) -->
+<div class="tab-content" id="tab-arqueo">
+  <div class="arqueo-container">
+    <div class="card">
+      <div class="card-title">🎯 Venta / Caja Esperada (CUP)</div>
+      <input type="number" class="exp-inp-lg" id="expected" placeholder="0" min="0" oninput="update()">
+    </div>
+
+    <div class="extra-grid">
+      <div class="extra-card-item transf">
+        <span class="extra-card-lbl transf">💳 Transf. (CUP)</span>
+        <input type="number" class="extra-card-inp transf" id="transfers" placeholder="0" min="0" oninput="update()">
+      </div>
+      <div class="extra-card-item retiro">
+        <span class="extra-card-lbl retiro">💸 Retirado (CUP)</span>
+        <input type="number" class="extra-card-inp retiro" id="withdrawals" placeholder="0" min="0" oninput="update()">
+      </div>
+    </div>
+
+    <!-- Recuadro dinámico para Sobrante / Faltante dentro de la pestaña de Arqueo -->
+    <div class="diff-box hidden" id="diff-box">
+      <span id="diff-lbl">Estado</span>
+      <span id="diff-val">0.00</span>
+    </div>
   </div>
 </div>
 
-<div class="col-hdrs">
-  <div class="col-hdr cup">🇨🇺 CUP <span class="col-subtag">(S / F)</span> <span class="col-total" id="hdr-cup">0</span></div>
-  <div class="col-hdr usd">🇺🇸 USD <span class="col-subtag">(S / F)</span> <span class="col-total" id="hdr-usd">$0</span></div>
-</div>
-
-<div class="bills-wrap">
-  <div class="bills-grid" id="bills-grid"></div>
-</div>
-
+<!-- PIE DE PÁGINA PERMANENTE CON TOTALES -->
 <div class="footer">
   <div class="totals-row">
     <div class="tot-box cup">
-      <div class="tot-lbl cup">Total CUP</div>
+      <div class="tot-lbl cup">Efectivo CUP</div>
       <div class="tot-val cup" id="tot-cup">0.00</div>
     </div>
     <div class="tot-box usd">
-      <div class="tot-lbl usd">Total USD</div>
+      <div class="tot-lbl usd">Efectivo USD</div>
       <div class="tot-val usd" id="tot-usd">$0.00</div>
     </div>
   </div>
   <div class="grand-row">
     <div>
-      <div class="grand-lbl">Total en CUP</div>
-      <div class="grand-conv" id="grand-conv">CUP + USD×tasa</div>
+      <div class="grand-lbl">Total General (CUP)</div>
+      <div class="grand-conv" id="grand-conv">Efectivo + USD + Transf. + Retiros</div>
     </div>
     <div class="grand-val" id="grand-val">0.00</div>
-  </div>
-  
-  <!-- Recuadro dinámico para Sobrante / Faltante -->
-  <div class="diff-box hidden" id="diff-box">
-    <span id="diff-lbl">Estado</span>
-    <span id="diff-val">0.00</span>
   </div>
 </div>
 
@@ -361,6 +481,20 @@ function fmtD(d){ return d>=1?String(d):d.toFixed(2); }
 function fmt(n,d=2){ return n.toLocaleString('es-CU',{minimumFractionDigits:d,maximumFractionDigits:d}); }
 function getRate(){ return parseFloat(document.getElementById('rate').value)||670; }
 
+/* ── Cambio de Pestañas ── */
+function switchTab(tabName){
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  if(tabName === 'contador'){
+    document.getElementById('btn-tab-contador').classList.add('active');
+    document.getElementById('tab-contador').classList.add('active');
+  } else if(tabName === 'arqueo'){
+    document.getElementById('btn-tab-arqueo').classList.add('active');
+    document.getElementById('tab-arqueo').classList.add('active');
+  }
+}
+
 /* ── Persistencia de denominaciones habilitadas ── */
 function loadEnabledCup(){
   try{
@@ -380,7 +514,7 @@ let enabledCup = loadEnabledCup();
   qtyF[k]=0;
 });
 
-/* ── Construir grid principal (CUP habilitados + USD) ── */
+/* ── Construir grid principal ── */
 function renderGrid(){
   CUP = ALL_CUP.filter(d=>enabledCup.includes(d));
   const grid = document.getElementById('bills-grid');
@@ -455,16 +589,22 @@ function update(){
     if(el) el.textContent='$'+fmt(s,0);
   });
 
+  const transfers = parseFloat(document.getElementById('transfers').value) || 0;
+  const withdrawals = parseFloat(document.getElementById('withdrawals').value) || 0;
+
   const usdInCup=usdTotal*rate;
-  const grand=cupTotal+usdInCup;
+  const grand=cupTotal + usdInCup + transfers + withdrawals;
 
   document.getElementById('hdr-cup').textContent=fmt(cupTotal,0);
   document.getElementById('hdr-usd').textContent='$'+fmt(usdTotal,0);
   document.getElementById('tot-cup').textContent=fmt(cupTotal);
   document.getElementById('tot-usd').textContent='$'+fmt(usdTotal);
   document.getElementById('grand-val').textContent=fmt(grand);
-  document.getElementById('grand-conv').textContent=
-    fmt(cupTotal)+' + '+fmt(usdInCup)+' (USD×'+rate+')';
+
+  let convText = fmt(cupTotal) + ' (Efect. CUP) + ' + fmt(usdInCup) + ' (USD)';
+  if(transfers > 0) convText += ' + ' + fmt(transfers) + ' (Transf.)';
+  if(withdrawals > 0) convText += ' + ' + fmt(withdrawals) + ' (Retirado)';
+  document.getElementById('grand-conv').textContent = convText;
 
   /* ── Cálculo de Faltante / Sobrante ── */
   const expVal = parseFloat(document.getElementById('expected').value) || 0;
@@ -503,6 +643,8 @@ function clearAll(){
     if(elF) elF.value='';
   });
   document.getElementById('expected').value = '';
+  document.getElementById('transfers').value = '';
+  document.getElementById('withdrawals').value = '';
   update();
 }
 
