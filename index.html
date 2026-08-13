@@ -33,38 +33,55 @@ body{
 /* ── HEADER ── */
 .hdr{
   background:#29abe2;color:#fff;
-  padding:8px 14px;
+  padding:10px 16px;
   display:flex;align-items:center;justify-content:space-between;
   flex-shrink:0;
 }
-.hdr-title{font-size:14px;font-weight:800;letter-spacing:-.01em;}
-.hdr-sub{font-size:9px;color:#ffffffc0;margin-top:1px;}
-.hdr-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.hdr-title{font-size:16px;font-weight:800;letter-spacing:-.01em;}
+.hdr-sub{font-size:10.5px;color:#ffffffd0;margin-top:2px;}
+.hdr-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .icon-btn{
-  width:30px;height:30px;border-radius:50%;
+  width:34px;height:34px;border-radius:50%;
   background:#ffffff30;color:#fff;border:none;
-  font-size:14px;cursor:pointer;
+  font-size:16px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 .icon-btn:active{background:#ffffff4a;}
 
-/* ── RATE BAR ── */
-.rate-bar{
+/* ── BARS (RATE & EXPECTED) ── */
+.top-bar{
   background:var(--usd-bg);
   border-bottom:1px solid var(--usd-line);
-  padding:5px 12px;
-  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;
+  display:flex;align-items:center;gap:8px;
   flex-shrink:0;
 }
-.rate-lbl{font-size:10px;font-weight:700;color:var(--usd);flex:1;}
-.rate-wrap{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);}
+.rate-lbl{font-size:11.5px;font-weight:700;color:var(--usd);flex:1;}
+.rate-wrap{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);}
 .rate-inp{
-  width:60px;padding:2px 5px;
+  width:62px;padding:3px 6px;
   border:1px solid var(--usd-line);border-radius:5px;
-  font-size:12px;font-weight:800;color:var(--usd);
+  font-size:13.5px;font-weight:800;color:var(--usd);
   font-family:inherit;text-align:right;background:#fff;
 }
 .rate-inp:focus{outline:none;border-color:var(--usd);}
+
+.exp-bar{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding:6px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;flex-shrink:0;
+}
+.exp-lbl{font-size:12.5px;font-weight:700;color:var(--ink);}
+.exp-wrap{display:flex;align-items:center;gap:5px;}
+.exp-inp{
+  width:105px;padding:4px 8px;
+  border:1px solid var(--line);border-radius:5px;
+  font-size:13.5px;font-weight:800;color:var(--ink);
+  font-family:inherit;text-align:right;background:#fafafa;
+}
+.exp-inp:focus{outline:none;border-color:var(--cup);background:#fff;}
 
 /* ── COLUMN HEADERS ── */
 .col-hdrs{
@@ -73,16 +90,17 @@ body{
   flex-shrink:0;
 }
 .col-hdr{
-  padding:5px 10px;
-  font-size:10px;font-weight:800;
+  padding:6px 12px;
+  font-size:11.5px;font-weight:800;
   text-transform:uppercase;letter-spacing:.05em;
-  display:flex;align-items:center;gap:4px;
+  display:flex;align-items:center;gap:5px;
 }
 .col-hdr.cup{color:var(--cup);border-right:1px solid var(--line);}
 .col-hdr.usd{color:var(--usd);}
+.col-subtag{font-size:9.5px;font-weight:600;opacity:0.8;margin-left:2px;}
 .col-total{
   margin-left:auto;
-  font-size:11px;font-weight:800;letter-spacing:0;text-transform:none;
+  font-size:12.5px;font-weight:800;letter-spacing:0;text-transform:none;
   font-family:"Georgia",serif;
 }
 
@@ -108,7 +126,7 @@ body{
 .bill-row.usd{background:#fafdfe;}
 
 .denom{
-  font-size:15px;font-weight:800;
+  font-size:16px;font-weight:800;
   font-family:"Georgia",serif;
   width:38px;flex-shrink:0;
   letter-spacing:-.02em;
@@ -116,18 +134,19 @@ body{
 .denom.cup{color:var(--cup);}
 .denom.usd{color:var(--usd);}
 
-.op{
-  font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;
+.qinp-group{
+  display:flex;align-items:center;gap:3px;
+  flex:1;min-width:0;
 }
-
 .qinp{
-  flex:1;min-width:0;max-width:46px;
+  width:50%;min-width:0;
   text-align:center;
-  border:none;border-bottom:1.5px solid var(--line);
-  padding:1px 1px 3px;
-  font-size:16px;font-weight:700;
+  border:none;border-bottom:2px solid var(--line);
+  padding:2px 0 3px;
+  font-size:15px;font-weight:800;
   font-family:inherit;background:transparent;
 }
+.qinp::placeholder{font-size:10.5px;font-weight:700;color:#aaa;}
 .qinp:focus{outline:none;}
 .cup .qinp{border-color:var(--cup-line);}
 .usd .qinp{border-color:var(--usd-line);}
@@ -135,9 +154,9 @@ body{
 .usd .qinp:focus{border-color:var(--usd);}
 
 .sub{
-  font-size:13px;font-weight:700;
+  font-size:14px;font-weight:800;
   font-family:"Georgia",serif;
-  flex:1;min-width:0;
+  width:50px;flex-shrink:0;
   text-align:right;
   letter-spacing:-.01em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -155,7 +174,7 @@ body{
 .footer{
   background:var(--white);
   border-top:2px solid var(--line);
-  padding:12px 14px 14px;
+  padding:10px 14px 14px;
   flex-shrink:0;
 }
 .totals-row{
@@ -163,28 +182,42 @@ body{
   gap:10px;margin-bottom:10px;
 }
 .tot-box{
-  border-radius:10px;padding:10px 14px;
+  border-radius:8px;padding:9px 12px;
 }
 .tot-box.cup{background:var(--cup-bg);border:1px solid var(--cup-line);}
 .tot-box.usd{background:var(--usd-bg);border:1px solid var(--usd-line);}
-.tot-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.tot-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 .tot-lbl.cup{color:var(--cup);}
 .tot-lbl.usd{color:var(--usd);}
-.tot-val{font-size:23px;font-weight:800;font-family:"Georgia",serif;letter-spacing:-.02em;}
+.tot-val{font-size:22px;font-weight:800;font-family:"Georgia",serif;letter-spacing:-.02em;}
 .tot-val.cup{color:var(--cup);}
 .tot-val.usd{color:var(--usd);}
 
 .grand-row{
   background:var(--total-bg);
   border:1px solid #b8dcf2;
-  border-radius:10px;
+  border-radius:8px;
   padding:10px 14px;
   display:flex;align-items:center;justify-content:space-between;
   gap:10px;
 }
-.grand-lbl{font-size:12px;font-weight:700;color:var(--total);text-transform:uppercase;letter-spacing:.05em;}
+.grand-lbl{font-size:12px;font-weight:800;color:var(--total);text-transform:uppercase;letter-spacing:.05em;}
 .grand-val{font-size:27px;font-weight:800;font-family:"Georgia",serif;color:var(--total);letter-spacing:-.02em;white-space:nowrap;}
 .grand-conv{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* ── STATUS SOBRANTE / FALTANTE ── */
+.diff-box{
+  margin-top:10px;
+  padding:9px 14px;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-weight:800;font-size:14.5px;
+  transition:all 0.2s ease;
+}
+.diff-box.sobrante{background-color:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;}
+.diff-box.faltante{background-color:#ffebee;color:#c62828;border:1px solid #ef9a9a;}
+.diff-box.exacto{background-color:#e0f2fe;color:#0288d1;border:1px solid #b3e5fc;}
+.diff-box.hidden{display:none;}
 
 /* ── SETTINGS OVERLAY ── */
 .settings-overlay{
@@ -196,43 +229,43 @@ body{
 .settings-overlay.open{display:flex;}
 .settings-hdr{
   background:#29abe2;color:#fff;
-  padding:12px 14px;
-  display:flex;align-items:center;gap:10px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
   flex-shrink:0;
 }
 .settings-back{
   background:none;border:none;color:#fff;
-  font-size:20px;line-height:1;cursor:pointer;
-  width:30px;height:30px;
+  font-size:22px;line-height:1;cursor:pointer;
+  width:32px;height:32px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.settings-title{font-size:17px;font-weight:800;}
+.settings-title{font-size:18px;font-weight:800;}
 .settings-body{
   flex:1;overflow-y:auto;
   -webkit-overflow-scrolling:touch;
-  padding:18px 14px 30px;
+  padding:20px 16px 32px;
 }
-.settings-hint{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.4;}
+.settings-hint{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.4;}
 .denom-card{
   background:var(--white);
   border-radius:12px;
-  padding:16px 12px;
+  padding:18px 14px;
   box-shadow:0 1px 4px rgba(0,0,0,.06);
 }
 .denom-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  row-gap:26px;column-gap:6px;
+  row-gap:28px;column-gap:8px;
 }
 .denom-item{
   display:flex;align-items:center;gap:8px;
-  font-size:19px;font-weight:800;
+  font-size:20px;font-weight:800;
   font-family:"Georgia",serif;
   color:var(--cup);
   cursor:pointer;
 }
 .denom-check{
-  width:24px;height:24px;flex-shrink:0;
+  width:26px;height:26px;flex-shrink:0;
   accent-color:var(--cup);
 }
 </style>
@@ -242,7 +275,7 @@ body{
 <div class="hdr">
   <div>
     <div class="hdr-title">💵 Contador de Dinero</div>
-    <div class="hdr-sub">CUP · USD · Conversión automática</div>
+    <div class="hdr-sub">CUP · USD · Sueltos y Fajos · Control de Caja</div>
   </div>
   <div class="hdr-actions">
     <button class="icon-btn" onclick="openSettings()" title="Ajustes">⚙️</button>
@@ -250,7 +283,7 @@ body{
   </div>
 </div>
 
-<div class="rate-bar">
+<div class="top-bar">
   <div class="rate-lbl">💱 Tasa de cambio</div>
   <div class="rate-wrap">
     <span>1 USD =</span>
@@ -259,9 +292,16 @@ body{
   </div>
 </div>
 
+<div class="exp-bar">
+  <div class="exp-lbl">🎯 Venta / Caja Esperada (CUP)</div>
+  <div class="exp-wrap">
+    <input type="number" class="exp-inp" id="expected" placeholder="0" min="0" oninput="update()">
+  </div>
+</div>
+
 <div class="col-hdrs">
-  <div class="col-hdr cup">🇨🇺 CUP <span class="col-total" id="hdr-cup">0</span></div>
-  <div class="col-hdr usd">🇺🇸 USD <span class="col-total" id="hdr-usd">$0</span></div>
+  <div class="col-hdr cup">🇨🇺 CUP <span class="col-subtag">(S / F)</span> <span class="col-total" id="hdr-cup">0</span></div>
+  <div class="col-hdr usd">🇺🇸 USD <span class="col-subtag">(S / F)</span> <span class="col-total" id="hdr-usd">$0</span></div>
 </div>
 
 <div class="bills-wrap">
@@ -286,6 +326,12 @@ body{
     </div>
     <div class="grand-val" id="grand-val">0.00</div>
   </div>
+  
+  <!-- Recuadro dinámico para Sobrante / Faltante -->
+  <div class="diff-box hidden" id="diff-box">
+    <span id="diff-lbl">Estado</span>
+    <span id="diff-val">0.00</span>
+  </div>
 </div>
 
 <!-- ── PANTALLA DE AJUSTES ── -->
@@ -305,7 +351,10 @@ body{
 <script>
 const ALL_CUP = [10000,5000,2000,1000,500,200,100,50,20,10,5,3,1];
 const USD = [100,50,20,10,5,2,1];
-const qty = {};
+
+// Cantidades almacenadas: S (Sueltos) y F (Fajos)
+const qtyS = {};
+const qtyF = {};
 let CUP = [];
 
 function fmtD(d){ return d>=1?String(d):d.toFixed(2); }
@@ -318,7 +367,7 @@ function loadEnabledCup(){
     const saved = JSON.parse(localStorage.getItem('cd_cup_denoms'));
     if(Array.isArray(saved) && saved.length) return saved.filter(d=>ALL_CUP.includes(d));
   }catch(e){}
-  return [1000,500,200,100,50,20,10,5,3,1]; // por defecto (igual que antes)
+  return [1000,500,200,100,50,20,10,5,3,1];
 }
 function saveEnabledCup(list){
   localStorage.setItem('cd_cup_denoms', JSON.stringify(list));
@@ -326,7 +375,10 @@ function saveEnabledCup(list){
 
 let enabledCup = loadEnabledCup();
 
-[...ALL_CUP.map(d=>'c'+d), ...USD.map(d=>'u'+d)].forEach(k=>qty[k]=0);
+[...ALL_CUP.map(d=>'c'+d), ...USD.map(d=>'u'+d)].forEach(k=>{
+  qtyS[k]=0;
+  qtyF[k]=0;
+});
 
 /* ── Construir grid principal (CUP habilitados + USD) ── */
 function renderGrid(){
@@ -342,9 +394,10 @@ function renderGrid(){
       cell.className='bill-row cup';
       cell.innerHTML=`
         <span class="denom cup">${fmtD(d)}</span>
-        <span class="op">x</span>
-        <input class="qinp" id="inp_${k}" type="number" min="0" inputmode="numeric" value="${qty[k]||0}" onfocus="this.select()" oninput="sq('${k}',this.value)">
-        <span class="op">=</span>
+        <div class="qinp-group">
+          <input class="qinp" id="inp_s_${k}" type="number" min="0" inputmode="numeric" placeholder="S" value="${qtyS[k]||''}" onfocus="this.select()" oninput="sq('${k}','s',this.value)">
+          <input class="qinp" id="inp_f_${k}" type="number" min="0" inputmode="numeric" placeholder="F" value="${qtyF[k]||''}" onfocus="this.select()" oninput="sq('${k}','f',this.value)">
+        </div>
         <span class="sub cup" id="sub_${k}">0</span>`;
       grid.appendChild(cell);
     } else {
@@ -358,9 +411,10 @@ function renderGrid(){
       cell.className='bill-row usd';
       cell.innerHTML=`
         <span class="denom usd">$${fmtD(d)}</span>
-        <span class="op">x</span>
-        <input class="qinp" id="inp_${k}" type="number" min="0" inputmode="numeric" value="${qty[k]||0}" onfocus="this.select()" oninput="sq('${k}',this.value)">
-        <span class="op">=</span>
+        <div class="qinp-group">
+          <input class="qinp" id="inp_s_${k}" type="number" min="0" inputmode="numeric" placeholder="S" value="${qtyS[k]||''}" onfocus="this.select()" oninput="sq('${k}','s',this.value)">
+          <input class="qinp" id="inp_f_${k}" type="number" min="0" inputmode="numeric" placeholder="F" value="${qtyF[k]||''}" onfocus="this.select()" oninput="sq('${k}','f',this.value)">
+        </div>
         <span class="sub usd" id="sub_${k}">$0</span>`;
       grid.appendChild(cell);
     } else {
@@ -372,8 +426,10 @@ function renderGrid(){
   update();
 }
 
-function sq(k,v){
-  qty[k]=Math.max(0,parseInt(v)||0);
+function sq(k,type,v){
+  const val = Math.max(0, parseInt(v)||0);
+  if(type==='s') qtyS[k] = val;
+  if(type==='f') qtyF[k] = val;
   update();
 }
 
@@ -382,14 +438,19 @@ function update(){
   let cupTotal=0, usdTotal=0;
 
   CUP.forEach(d=>{
-    const k='c'+d, q=qty[k]||0, s=q*d;
-    cupTotal+=s;
+    const k='c'+d;
+    const totalBilletes = (qtyS[k]||0) + ((qtyF[k]||0)*100);
+    const s = totalBilletes * d;
+    cupTotal += s;
     const el=document.getElementById('sub_'+k);
     if(el) el.textContent=fmt(s,0);
   });
+
   USD.forEach(d=>{
-    const k='u'+d, q=qty[k]||0, s=q*d;
-    usdTotal+=s;
+    const k='u'+d;
+    const totalBilletes = (qtyS[k]||0) + ((qtyF[k]||0)*100);
+    const s = totalBilletes * d;
+    usdTotal += s;
     const el=document.getElementById('sub_'+k);
     if(el) el.textContent='$'+fmt(s,0);
   });
@@ -404,14 +465,44 @@ function update(){
   document.getElementById('grand-val').textContent=fmt(grand);
   document.getElementById('grand-conv').textContent=
     fmt(cupTotal)+' + '+fmt(usdInCup)+' (USD×'+rate+')';
+
+  /* ── Cálculo de Faltante / Sobrante ── */
+  const expVal = parseFloat(document.getElementById('expected').value) || 0;
+  const diffBox = document.getElementById('diff-box');
+  const diffLbl = document.getElementById('diff-lbl');
+  const diffVal = document.getElementById('diff-val');
+
+  if(expVal > 0){
+    diffBox.classList.remove('hidden', 'sobrante', 'faltante', 'exacto');
+    const diff = grand - expVal;
+    if(diff > 0.001){
+      diffBox.classList.add('sobrante');
+      diffLbl.textContent = '🟢 Sobrante:';
+      diffVal.textContent = '+' + fmt(diff);
+    } else if(diff < -0.001){
+      diffBox.classList.add('faltante');
+      diffLbl.textContent = '🔴 Faltante:';
+      diffVal.textContent = '-' + fmt(Math.abs(diff));
+    } else {
+      diffBox.classList.add('exacto');
+      diffLbl.textContent = '🔵 Caja Exacta:';
+      diffVal.textContent = fmt(0);
+    }
+  } else {
+    diffBox.classList.add('hidden');
+  }
 }
 
 function clearAll(){
-  Object.keys(qty).forEach(k=>{
-    qty[k]=0;
-    const el=document.getElementById('inp_'+k);
-    if(el) el.value=0;
+  Object.keys(qtyS).forEach(k=>{
+    qtyS[k]=0;
+    qtyF[k]=0;
+    const elS=document.getElementById('inp_s_'+k);
+    const elF=document.getElementById('inp_f_'+k);
+    if(elS) elS.value='';
+    if(elF) elF.value='';
   });
+  document.getElementById('expected').value = '';
   update();
 }
 
@@ -434,7 +525,7 @@ function toggleDenom(d,checked){
     if(!enabledCup.includes(d)) enabledCup.push(d);
   } else {
     if(enabledCup.length>1) enabledCup=enabledCup.filter(x=>x!==d);
-    else { // no permitir dejar 0 denominaciones activas
+    else {
       document.getElementById('chk_'+d).checked=true;
       return;
     }
