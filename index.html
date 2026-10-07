@@ -395,6 +395,12 @@ body{
   display:flex;align-items:center;justify-content:center;
 }
 .hist-del-btn:active{background:#e0e0e0;}
+.axis-row{display:flex;gap:8px;margin-bottom:8px;}
+.axis-sel{flex:1;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:6px;font-size:14px;font-family:inherit;background:#fafafa;color:var(--ink);}
+.axis-btn{flex:1;padding:10px;border:none;border-radius:8px;background:var(--transf);color:#fff;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;}
+.axis-btn.sec{background:#e9eef3;color:var(--ink);flex:0 0 auto;}
+.axis-btn:active{opacity:.85;}
+.axis-info{font-size:12px;color:var(--muted);line-height:1.5;white-space:pre-line;}
 .save-hist-btn{
   margin-top:8px;
   width:100%;
@@ -513,6 +519,19 @@ body{
 <!-- PESTAÑA 2: ARQUEO DE CAJA (VENTA ESPERADA, TRANSFERENCIAS Y RETIROS) -->
 <div class="tab-content" id="tab-arqueo">
   <div class="arqueo-container">
+    <div class="card" id="axis-card">
+      <div class="card-title">🔌 Traer de AxisPOS</div>
+      <div class="axis-row">
+        <select class="axis-sel" id="axis-user" onchange="localStorage.setItem('cd_axis_user',this.value)"><option value="todos">Todos los usuarios</option></select>
+        <input type="date" class="axis-sel" id="axis-date">
+      </div>
+      <div class="axis-row">
+        <button class="axis-btn" onclick="traerDeAxis()">Traer ventas del día</button>
+        <button class="axis-btn sec" onclick="cambiarServidor()">📡 Servidor</button>
+      </div>
+      <div class="axis-info" id="axis-info">Servidor: sin configurar</div>
+    </div>
+
     <div class="card">
       <div class="card-title">🎯 Venta / Caja Esperada (CUP)</div>
       <input type="number" class="exp-inp-lg" id="expected" placeholder="0" min="0" oninput="update()">
@@ -584,7 +603,7 @@ body{
 </div>
 
 <script>
-const ALL_CUP = [10000,5000,2000,1000,500,200,100,50,20,10,5,3,1];
+const ALL_CUP = [20000,10000,5000,2000,1000,500,200,100,50,20,10,5,3,1];
 const USD = [100,50,20,10,5,2,1];
 
 // Cantidades almacenadas: S (Sueltos) y F (Fajos)
@@ -607,6 +626,7 @@ function switchTab(tabName){
   } else if(tabName === 'arqueo'){
     document.getElementById('btn-tab-arqueo').classList.add('active');
     document.getElementById('tab-arqueo').classList.add('active');
+    cargarUsuariosAxis(true);
   } else if(tabName === 'historial'){
     document.getElementById('btn-tab-historial').classList.add('active');
     document.getElementById('tab-historial').classList.add('active');
@@ -618,9 +638,18 @@ function switchTab(tabName){
 function loadEnabledCup(){
   try{
     const saved = JSON.parse(localStorage.getItem('cd_cup_denoms'));
-    if(Array.isArray(saved) && saved.length) return saved.filter(d=>ALL_CUP.includes(d));
+    if(Array.isArray(saved) && saved.length){
+      const lista = saved.filter(d=>ALL_CUP.includes(d));
+      // Una sola vez: activa el billete de 20.000 para quien ya tenía sus denominaciones guardadas (se puede quitar en Ajustes).
+      if(!localStorage.getItem('cd_20000_ok')){
+        localStorage.setItem('cd_20000_ok','1');
+        if(!lista.includes(20000)){ lista.unshift(20000); localStorage.setItem('cd_cup_denoms', JSON.stringify(lista)); }
+      }
+      return lista;
+    }
   }catch(e){}
-  return [1000,500,200,100,50,20,10,5,3,1];
+  localStorage.setItem('cd_20000_ok','1');
+  return [20000,1000,500,200,100,50,20,10,5,3,1];
 }
 function saveEnabledCup(list){
   localStorage.setItem('cd_cup_denoms', JSON.stringify(list));
@@ -934,6 +963,200 @@ function closeSettings(){
 
 document.getElementById('rate').addEventListener('input',update);
 renderGrid();
+/* ── AxisPOS: ventas del día por usuario, a través del servidor de pedidos ── */
+// Si la página se abre desde el propio servidor (http://IP:8080/contador) no hace falta dirección; en la app del móvil se guarda con "📡 Servidor".
+const SERVIDOR_PROPIO = (location.protocol === 'http:' || location.protocol === 'https:') && location.port !== '';
+function axisBase(){ return SERVIDOR_PROPIO ? '' : (localStorage.getItem('cd_servidor')||'').trim(); }
+function axisTieneServidor(){ return SERVIDOR_PROPIO || !!axisBase(); }
+function normalizarServidor(txt){
+  let d = String(txt||'').trim();
+  if(!d) return '';
+  if(!/^https?:\/\//i.test(d)) d = 'http://' + d;
+  d = d.replace(/\/+$/,'');
+  if(!/:\d+$/.test(d.replace(/^https?:\/\//i,''))) d += ':8080';
+  return d;
+}
+function hoyLocal(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function escHtml(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function pintarServidor(extra){
+  const el = document.getElementById('axis-info');
+  if(!el) return;
+  const srv = SERVIDOR_PROPIO ? 'este servidor' : (axisBase() ? axisBase().replace(/^https?:\/\//i,'') : 'sin configurar');
+  el.textContent = 'Servidor: ' + srv + (extra ? '\n' + extra : '');
+}
+function cambiarServidor(){
+  if(SERVIDOR_PROPIO){ alert('Esta página ya está abierta desde el servidor; no hace falta dirección.'); return; }
+  const actual = axisBase().replace(/^https?:\/\//i,'');
+  const r = prompt('Dirección del servidor de pedidos (la que muestra la PC, por ejemplo 192.168.1.10:8080).\nDéjala vacía para desconectar:', actual);
+  if(r === null) return;
+  const nueva = normalizarServidor(r);
+  if(nueva){ localStorage.setItem('cd_servidor', nueva); srv_recordarServidor(nueva); } else localStorage.removeItem('cd_servidor');
+  pintarServidor();
+  if(nueva) cargarUsuariosAxis(false);
+}
+
+// ---- Buscar el servidor solo, cuando cambió el punto de acceso y la IP guardada ya no responde ----
+// Prueba primero las direcciones que ya funcionaron antes, luego la red en la que está este teléfono y los rangos
+// más comunes de punto de acceso. Lo que encuentra lo recuerda para la próxima vez.
+const srv_MEM = 'cd_servidor_mem';
+function srv_prefijoDe(ip) { const m = /^(\d+\.\d+\.\d+)\.\d+$/.exec(String(ip || '')); return m ? m[1] : null; }
+function srv_leerMem() { try { return JSON.parse(localStorage.getItem(srv_MEM) || '{}') || {}; } catch(e) { return {}; } }
+function srv_recordarServidor(base) {
+    try {
+        const m = /^https?:\/\/(\d+\.\d+\.\d+)\.(\d+)(?::\d+)?$/i.exec(String(base || ''));
+        if(!m) return;
+        const mem = srv_leerMem();
+        mem[m[1]] = m[2];
+        localStorage.setItem(srv_MEM, JSON.stringify(mem));
+    } catch(e) {}
+}
+async function srv_probarServidor(base, ms) {
+    const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    const t = ctrl ? setTimeout(() => ctrl.abort(), ms) : null;
+    try {
+        const r = await fetch(base + '/api/ping', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined });
+        const d = await r.json();
+        return !!(d && d.app === 'toto-pedidos');
+    } catch(e) { return false; } finally { if(t) clearTimeout(t); }
+}
+function srv_ipsLocales() {
+    return new Promise(resolve => {
+        const ips = new Set();
+        let pc = null, listo = false;
+        function fin() { if(listo) return; listo = true; try { if(pc) pc.close(); } catch(e) {} resolve(Array.from(ips)); }
+        try { pc = new RTCPeerConnection({ iceServers: [] }); } catch(e) { resolve([]); return; }
+        try {
+            pc.createDataChannel('x');
+            pc.onicecandidate = ev => {
+                if(!ev || !ev.candidate) { fin(); return; }
+                const m = /(\d+\.\d+\.\d+\.\d+)/.exec(ev.candidate.candidate || '');
+                if(m && !/^(0\.|127\.|169\.254\.)/.test(m[1])) ips.add(m[1]);
+            };
+            pc.createOffer().then(o => pc.setLocalDescription(o)).catch(fin);
+        } catch(e) { fin(); }
+        setTimeout(fin, 1500);
+    });
+}
+async function srv_escanearPrefijo(prefijo, puerto) {
+    let encontrado = null, i = 1;
+    async function trabajador() {
+        while(!encontrado && i <= 254) {
+            const h = i++;
+            const base = 'http://' + prefijo + '.' + h + ':' + puerto;
+            if(await srv_probarServidor(base, 700)) { encontrado = base; }
+        }
+    }
+    await Promise.all(Array.from({ length: 40 }, trabajador));
+    return encontrado;
+}
+// Devuelve la dirección encontrada (por ejemplo http://192.168.43.5:8080) o '' si no apareció.
+async function srv_buscarServidorEnRed(direccionActual, avance) {
+    const mp = /:(\d+)$/.exec(String(direccionActual || '').replace(/^https?:\/\//i, ''));
+    const puerto = mp ? mp[1] : '8080';
+    const limite = Date.now() + 45000;
+    const mem = srv_leerMem();
+    // 1) direcciones completas que ya funcionaron antes (en cada red)
+    const directas = Object.keys(mem).map(p => 'http://' + p + '.' + mem[p] + ':' + puerto);
+    const rd = await Promise.all(directas.map(b => srv_probarServidor(b, 1200).then(ok => ok ? b : null)));
+    const dir = rd.find(x => x);
+    if(dir) return dir;
+    // 2) rangos: el de esta red (si el teléfono lo deja ver), los recordados y los más comunes
+    const prefijos = [];
+    function agregar(p) { if(p && !prefijos.includes(p)) prefijos.push(p); }
+    (await srv_ipsLocales()).forEach(ip => agregar(srv_prefijoDe(ip)));
+    agregar(srv_prefijoDe(String(direccionActual || '').replace(/^https?:\/\//i, '').split(':')[0]));
+    Object.keys(mem).forEach(agregar);
+    ['192.168.43', '192.168.137', '192.168.0', '192.168.1', '192.168.2', '172.20.10', '192.168.42', '10.0.0', '192.168.100'].forEach(agregar);
+    for(const p of prefijos) {
+        if(Date.now() > limite) break;
+        if(avance) avance('Buscando el servidor en ' + p + '.x ...');
+        const b = await srv_escanearPrefijo(p, puerto);
+        if(b) return b;
+    }
+    return '';
+}
+
+async function axisFetch(ruta, reintento, buscado){
+  const h = {};
+  const clave = localStorage.getItem('cd_clave_caja');
+  if(clave) h['X-Clave-Caja'] = clave;
+  const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  const t = ctrl ? setTimeout(()=>ctrl.abort(), 30000) : null;
+  let res, data;
+  try{
+    res = await fetch(axisBase() + ruta, { headers:h, cache:'no-store', signal: ctrl?ctrl.signal:undefined });
+    data = await res.json().catch(()=>null);
+  } catch(e){
+    // No respondió: puede que haya cambiado el punto de acceso. Se busca el servidor solo y se repite.
+    if(SERVIDOR_PROPIO || buscado) throw new Error('No encuentro el servidor. Revisa que estés en el mismo WiFi que la PC.');
+    if(t) clearTimeout(t);
+    pintarServidor('Buscando el servidor en la red...');
+    const nueva = await srv_buscarServidorEnRed(axisBase(), x=>pintarServidor(x));
+    if(!nueva) throw new Error('No encuentro el servidor. Revisa que estés en el mismo WiFi que la PC.');
+    localStorage.setItem('cd_servidor', nueva);
+    srv_recordarServidor(nueva);
+    pintarServidor();
+    return axisFetch(ruta, reintento, true);
+  } finally { if(t) clearTimeout(t); }
+  if(res.status === 401 && data && data.claveRequerida && !reintento){
+    const c = prompt(data.error || 'Escribe la clave de administrador del servidor:', '');
+    if(c === null) throw new Error('Hace falta la clave de administrador.');
+    localStorage.setItem('cd_clave_caja', c.trim());
+    return axisFetch(ruta, true);
+  }
+  if(!res.ok || !data || data.ok === false) throw new Error((data && data.error) || ('Error ' + res.status));
+  if(!SERVIDOR_PROPIO) srv_recordarServidor(axisBase());
+  return data;
+}
+async function cargarUsuariosAxis(silencioso){
+  const sel = document.getElementById('axis-user');
+  const fecha = document.getElementById('axis-date');
+  if(fecha && !fecha.value) fecha.value = hoyLocal();
+  pintarServidor();
+  if(!sel || !axisTieneServidor()) return;
+  try{
+    const d = await axisFetch('/api/caja-axis?usuarios=1');
+    const guardado = localStorage.getItem('cd_axis_user') || 'todos';
+    sel.innerHTML = '<option value="todos">Todos los usuarios</option>' + (d.usuarios||[]).map(u=>'<option value="'+u.id+'">'+escHtml(u.nombre)+'</option>').join('');
+    sel.value = Array.from(sel.options).some(o=>o.value===guardado) ? guardado : 'todos';
+  }catch(e){
+    if(!silencioso) pintarServidor('⚠️ ' + e.message);
+  }
+}
+async function traerDeAxis(){
+  if(!axisTieneServidor()){
+    pintarServidor('Buscando el servidor en la red...');
+    const hallado = await srv_buscarServidorEnRed('', x=>pintarServidor(x));
+    if(hallado){ localStorage.setItem('cd_servidor', hallado); srv_recordarServidor(hallado); }
+    else { cambiarServidor(); if(!axisTieneServidor()) return; }
+  }
+  const usuario = document.getElementById('axis-user').value || 'todos';
+  const fecha = document.getElementById('axis-date').value || hoyLocal();
+  pintarServidor('Consultando AxisPOS...');
+  try{
+    const d = await axisFetch('/api/caja-axis?usuario=' + encodeURIComponent(usuario) + '&desde=' + fecha + '&hasta=' + fecha);
+    document.getElementById('expected').value = d.esperado ? Math.round(d.esperado*100)/100 : '';
+    document.getElementById('transfers').value = d.transferencias ? Math.round(d.transferencias*100)/100 : '';
+    document.getElementById('withdrawals').value = d.retiros ? Math.round(d.retiros*100)/100 : '';
+    update();
+    let txt = '✅ ' + (d.usuarioNombre||'Todos') + ' · ' + fecha + ' · ' + d.cantidadVentas + ' ventas\n' +
+      'Ventas: ' + fmt(d.ventas) + ' · Transf.: ' + fmt(d.transferencias) + ' · Devoluciones: ' + fmt(d.devoluciones) +
+      (d.ingresos ? ' · Ingresos: ' + fmt(d.ingresos) : '') + ' · Retiros/gastos: ' + fmt(d.retiros);
+    if(usuario === 'todos' && (d.porUsuario||[]).length > 1){
+      txt += '\n' + d.porUsuario.map(u=>u.nombre+': '+fmt(u.esperado)+(u.transferencias?' (transf. '+fmt(u.transferencias)+')':'')).join('\n');
+    }
+    (d.avisos||[]).forEach(a=>{ txt += '\n⚠️ ' + a; });
+    pintarServidor(txt);
+  }catch(e){
+    pintarServidor('⚠️ ' + e.message);
+  }
+}
+
+pintarServidor();
+cargarUsuariosAxis(true);
 </script>
 </body>
 </html>
