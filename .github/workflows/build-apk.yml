@@ -32,6 +32,25 @@ jobs:
             npx cap add android
           fi
 
+      - name: Permitir que la app lea el servidor de pedidos por HTTP en la red local
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          grep -q usesCleartextTraffic "$MANIFEST" || sed -i 's/<application/<application android:usesCleartextTraffic="true"/' "$MANIFEST"
+          node -e "
+          const fs = require('fs');
+          if (fs.existsSync('capacitor.config.json')) {
+            const c = JSON.parse(fs.readFileSync('capacitor.config.json', 'utf8'));
+            c.server = c.server || {};
+            c.server.cleartext = true;
+            c.android = c.android || {};
+            c.android.allowMixedContent = true;
+            fs.writeFileSync('capacitor.config.json', JSON.stringify(c, null, 2));
+            console.log('capacitor.config.json actualizado');
+          } else {
+            console.log('No hay capacitor.config.json: solo se ajusto el manifiesto');
+          }
+          "
+
       - name: Generar íconos y splash desde assets/
         run: npx capacitor-assets generate --android
 
