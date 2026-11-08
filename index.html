@@ -980,6 +980,10 @@ function hoyLocal(){
   const d = new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+function aplicarTasaServidor(d){
+  const t = d ? parseFloat(d.tasaDolar) : 0;
+  if(t > 0){ document.getElementById('rate').value = t; update(); }
+}
 function escHtml(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function pintarServidor(extra){
   const el = document.getElementById('axis-info');
@@ -1119,6 +1123,7 @@ async function cargarUsuariosAxis(silencioso){
   if(!sel || !axisTieneServidor()) return;
   try{
     const d = await axisFetch('/api/caja-axis?usuarios=1');
+    aplicarTasaServidor(d);
     const guardado = localStorage.getItem('cd_axis_user') || 'todos';
     sel.innerHTML = '<option value="todos">Todos los usuarios</option>' + (d.usuarios||[]).map(u=>'<option value="'+u.id+'">'+escHtml(u.nombre)+'</option>').join('');
     sel.value = Array.from(sel.options).some(o=>o.value===guardado) ? guardado : 'todos';
@@ -1141,10 +1146,11 @@ async function traerDeAxis(){
     document.getElementById('expected').value = d.esperado ? Math.round(d.esperado*100)/100 : '';
     document.getElementById('transfers').value = d.transferencias ? Math.round(d.transferencias*100)/100 : '';
     document.getElementById('withdrawals').value = d.retiros ? Math.round(d.retiros*100)/100 : '';
+    aplicarTasaServidor(d);
     update();
     let txt = '✅ ' + (d.usuarioNombre||'Todos') + ' · ' + fecha + ' · ' + d.cantidadVentas + ' ventas\n' +
       'Ventas: ' + fmt(d.ventas) + ' · Transf.: ' + fmt(d.transferencias) + ' · Devoluciones: ' + fmt(d.devoluciones) +
-      (d.ingresos ? ' · Ingresos: ' + fmt(d.ingresos) : '') + ' · Retiros/gastos: ' + fmt(d.retiros);
+      (d.ingresos ? ' · Ingresos: ' + fmt(d.ingresos) : '') + ' · Retiros/gastos: ' + fmt(d.retiros) + (d.tasaDolar > 0 ? ' · Tasa USD: ' + d.tasaDolar : '');
     if(usuario === 'todos' && (d.porUsuario||[]).length > 1){
       txt += '\n' + d.porUsuario.map(u=>u.nombre+': '+fmt(u.esperado)+(u.transferencias?' (transf. '+fmt(u.transferencias)+')':'')).join('\n');
     }
