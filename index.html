@@ -1150,7 +1150,7 @@ async function traerDeAxis(){
     update();
     let txt = '✅ ' + (d.usuarioNombre||'Todos') + ' · ' + fecha + ' · ' + d.cantidadVentas + ' ventas\n' +
       'Ventas: ' + fmt(d.ventas) + ' · Transf.: ' + fmt(d.transferencias) + ' · Devoluciones: ' + fmt(d.devoluciones) +
-      (d.ingresos ? ' · Ingresos: ' + fmt(d.ingresos) : '') + ' · Retiros/gastos: ' + fmt(d.retiros) + (d.tasaDolar > 0 ? ' · Tasa USD: ' + d.tasaDolar : '');
+      (d.ingresos ? ' · Ingresos: ' + fmt(d.ingresos) : '') + ' · Retiros/gastos: ' + fmt(d.retiros) + (d.tasaDolar > 0 ? ' · Tasa USD: ' + d.tasaDolar : ' · Tasa USD: sin configurar en el servidor');
     if(usuario === 'todos' && (d.porUsuario||[]).length > 1){
       txt += '\n' + d.porUsuario.map(u=>u.nombre+': '+fmt(u.esperado)+(u.transferencias?' (transf. '+fmt(u.transferencias)+')':'')).join('\n');
     }
